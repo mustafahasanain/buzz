@@ -55,7 +55,7 @@ def send_guest_booking_otp(event: int, identifier: str) -> dict:
 	otp_code = pyotp.HOTP(otp_secret).at(0)
 	cache_key = f"guest_booking_otp:{channel}:{identifier}"
 
-	if frappe.in_test:
+	if frappe.flags.in_test:
 		frappe.cache.set_value(cache_key, otp_secret, expires_in_sec=600)
 		return {"otp": otp_code}
 
@@ -273,7 +273,7 @@ def get_event_booking_data(event_route: str) -> dict:
 		"Buzz Custom Field",
 		filters={"event": event_doc.name, "enabled": 1},
 		fields=["*"],
-		order_by="order",
+		order_by="`order`",
 	)
 	data.custom_fields = custom_fields
 
@@ -297,7 +297,7 @@ def get_event_booking_data(event_route: str) -> dict:
 				"offline_payment_method": method.name,
 			},
 			fields=["*"],
-			order_by="order",
+			order_by="`order`",
 		)
 		offline_methods.append(
 			{

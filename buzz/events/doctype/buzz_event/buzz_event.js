@@ -303,7 +303,7 @@ frappe.ui.form.on("Buzz Event", {
 		frm.fields_dict.time_zone.set_data(getZoomSupportedTimezones());
 
 		if (frm.doc.route && frm.doc.is_published) {
-			frm.add_web_link(`/events/${frm.doc.route}`);
+			frm.add_web_link(`/dashboard/book-tickets/${frm.doc.route}`);
 		}
 
 		if (frm.doc.route) {

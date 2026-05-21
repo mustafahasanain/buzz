@@ -140,7 +140,7 @@ class BuzzEvent(Document):
 
 	def validate_guest_verification_config(self):
 		"""Ensure email/SMS is configured when OTP verification is enabled."""
-		if frappe.in_test or not self.allow_guest_booking:
+		if frappe.flags.in_test or not self.allow_guest_booking:
 			return
 
 		if self.guest_verification_method == "Email OTP":

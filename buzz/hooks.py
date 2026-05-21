@@ -21,6 +21,12 @@ website_route_rules = [
 	{"from_route": "/dashboard/<path:app_path>", "to_route": "dashboard"},
 ]
 
+# Redirect the clean public event URL to the dashboard booking page,
+# which is the actual public-facing event page (no web view at /events).
+website_redirects = [
+	{"source": r"/events/(.*)", "target": r"/dashboard/book-tickets/\1"},
+]
+
 # Scheduled Tasks
 # ---------------
 
