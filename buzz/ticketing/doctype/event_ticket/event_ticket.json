@@ -14,6 +14,7 @@
   "coupon_used",
   "column_break_sqmr",
   "attendee_email",
+  "attendee_phone",
   "ticket_type",
   "qr_code",
   "section_break_ijdn",
@@ -114,6 +115,12 @@
    "label": "Attendee Email",
    "options": "Email",
    "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "attendee_phone",
+   "fieldtype": "Data",
+   "label": "Attendee Phone"
   },
   {
    "fieldname": "coupon_used",

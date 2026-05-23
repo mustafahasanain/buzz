@@ -55,6 +55,7 @@ class BuzzEvent(Document):
 		route: DF.Data | None
 		schedule: DF.Table[ScheduleItem]
 		send_ticket_email: DF.Check
+		send_ticket_whatsapp: DF.Check
 		short_description: DF.SmallText | None
 		show_sponsorship_section: DF.Check
 		sponsor_deck_attachments: DF.Table[SponsorshipDeckItem]
@@ -68,6 +69,7 @@ class BuzzEvent(Document):
 		tax_percentage: DF.Percent
 		ticket_email_template: DF.Link | None
 		ticket_print_format: DF.Link | None
+		ticket_whatsapp_message: DF.SmallText | None
 		time_zone: DF.Autocomplete | None
 		title: DF.Data
 		venue: DF.Link | None
@@ -270,8 +272,10 @@ def create_from_template(template_name: str, options: str, additional_fields: st
 		"guest_verification_method": "guest_verification_method",
 		"time_zone": "time_zone",
 		"send_ticket_email": "send_ticket_email",
+		"send_ticket_whatsapp": "send_ticket_whatsapp",
 		"ticket_email_template": "ticket_email_template",
 		"ticket_print_format": "ticket_print_format",
+		"ticket_whatsapp_message": "ticket_whatsapp_message",
 		"apply_tax": "apply_tax",
 		"tax_inclusive": "tax_inclusive",
 		"tax_label": "tax_label",

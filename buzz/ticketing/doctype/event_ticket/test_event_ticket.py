@@ -4,7 +4,7 @@
 from unittest.mock import patch
 
 import frappe
-from frappe.tests import IntegrationTestCase
+from frappe.tests.utils import FrappeTestCase
 
 from buzz.utils import generate_qr_code_file, make_qr_image
 
@@ -12,7 +12,7 @@ EXTRA_TEST_RECORD_DEPENDENCIES = []
 IGNORE_TEST_RECORD_DEPENDENCIES = []
 
 
-class TestEventTicketEmail(IntegrationTestCase):
+class TestEventTicketEmail(FrappeTestCase):
 	"""Tests for Event Ticket email sending with template fallback logic."""
 
 	@classmethod
@@ -44,6 +44,7 @@ class TestEventTicketEmail(IntegrationTestCase):
 				"ticket_type": self.test_ticket_type.name,
 				"attendee_name": "Test Attendee",
 				"attendee_email": "test@example.com",
+				"attendee_phone": "0770 123 4567",
 			}
 		).insert()
 
@@ -139,7 +140,88 @@ class TestEventTicketEmail(IntegrationTestCase):
 		self.assertEqual(mock_sendmail.call_args[1]["template"], "ticket")
 
 
-class TestQRCodeGeneration(IntegrationTestCase):
+class TestEventTicketWhatsApp(FrappeTestCase):
+	"""Tests for Event Ticket WhatsApp sending via UltraMSG."""
+
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		cls.test_event = frappe.get_doc("Buzz Event", {"route": "test-route"})
+
+	def setUp(self):
+		self.test_event.send_ticket_whatsapp = 0
+		self.test_event.ticket_whatsapp_message = None
+		self.test_event.save()
+
+		settings = frappe.get_doc("Buzz Settings")
+		settings.ultramsg_api_url = "https://api.ultramsg.com/instance12345"
+		settings.ultramsg_token = "test-token"
+		settings.default_whatsapp_country_code = "964"
+		settings.default_ticket_whatsapp_message = None
+		settings.save()
+
+		self.test_ticket_type = frappe.get_doc(
+			{
+				"doctype": "Event Ticket Type",
+				"event": self.test_event.name,
+				"title": "WhatsApp Test Ticket",
+				"price": 100,
+			}
+		).insert()
+
+		self.test_ticket = frappe.get_doc(
+			{
+				"doctype": "Event Ticket",
+				"event": self.test_event.name,
+				"ticket_type": self.test_ticket_type.name,
+				"first_name": "WhatsApp",
+				"last_name": "Attendee",
+				"attendee_email": "whatsapp@example.com",
+				"attendee_phone": "0770 123 4567",
+			}
+		).insert()
+
+	def tearDown(self):
+		frappe.delete_doc("Event Ticket", self.test_ticket.name, force=True)
+		frappe.delete_doc("Event Ticket Type", self.test_ticket_type.name, force=True)
+		self.test_event.send_ticket_whatsapp = 0
+		self.test_event.ticket_whatsapp_message = None
+		self.test_event.save()
+
+		settings = frappe.get_doc("Buzz Settings")
+		settings.ultramsg_api_url = None
+		settings.ultramsg_token = None
+		settings.default_whatsapp_country_code = None
+		settings.default_ticket_whatsapp_message = None
+		settings.save()
+
+	@patch("buzz.integrations.ultramsg.requests.post")
+	def test_sends_whatsapp_when_enabled(self, mock_post):
+		mock_post.return_value.json.return_value = {"sent": "true", "id": "msg-1"}
+		self.test_event.send_ticket_whatsapp = 1
+		self.test_event.ticket_whatsapp_message = "Ticket {{ doc.name }} for {{ event_title }}"
+		self.test_event.save()
+
+		result = self.test_ticket.send_ticket_whatsapp()
+
+		self.assertTrue(result["success"])
+		mock_post.assert_called_once()
+		endpoint = mock_post.call_args[0][0]
+		payload = mock_post.call_args[1]["data"]
+		self.assertEqual(endpoint, "https://api.ultramsg.com/instance12345/messages/chat")
+		self.assertEqual(payload["to"], "9647701234567")
+		self.assertEqual(payload["token"], "test-token")
+		self.assertIn(self.test_ticket.name, payload["body"])
+
+	@patch("buzz.integrations.ultramsg.requests.post")
+	def test_skips_whatsapp_when_disabled(self, mock_post):
+		result = self.test_ticket.send_ticket_whatsapp()
+
+		self.assertIsNone(result)
+		mock_post.assert_not_called()
+
+
+class TestQRCodeGeneration(FrappeTestCase):
 	"""Tests for QR code generation utility."""
 
 	@classmethod

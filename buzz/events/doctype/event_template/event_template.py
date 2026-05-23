@@ -38,6 +38,7 @@ class EventTemplate(Document):
 		sponsor_deck_cc: DF.SmallText | None
 		sponsor_deck_email_template: DF.Link | None
 		sponsor_deck_reply_to: DF.Data | None
+		send_ticket_whatsapp: DF.Check
 		tax_label: DF.Data | None
 		tax_percentage: DF.Percent
 		template_add_ons: DF.Table[EventTemplateAddOn]
@@ -46,6 +47,7 @@ class EventTemplate(Document):
 		template_ticket_types: DF.Table[EventTemplateTicketType]
 		ticket_email_template: DF.Link | None
 		ticket_print_format: DF.Link | None
+		ticket_whatsapp_message: DF.SmallText | None
 		time_zone: DF.Autocomplete | None
 		venue: DF.Link | None
 	# end: auto-generated types
@@ -88,8 +90,10 @@ def create_template_from_event(event_name: str, template_name: str, options: str
 		"guest_verification_method": "guest_verification_method",
 		"time_zone": "time_zone",
 		"send_ticket_email": "send_ticket_email",
+		"send_ticket_whatsapp": "send_ticket_whatsapp",
 		"ticket_email_template": "ticket_email_template",
 		"ticket_print_format": "ticket_print_format",
+		"ticket_whatsapp_message": "ticket_whatsapp_message",
 		"apply_tax": "apply_tax",
 		"tax_label": "tax_label",
 		"tax_percentage": "tax_percentage",

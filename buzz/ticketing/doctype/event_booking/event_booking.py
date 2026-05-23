@@ -198,6 +198,7 @@ class EventBooking(Document):
 			ticket.first_name = attendee.first_name
 			ticket.last_name = attendee.last_name
 			ticket.attendee_email = attendee.email
+			ticket.attendee_phone = attendee.phone
 			ticket.coupon_used = self.coupon_code
 
 			if attendee.add_ons:

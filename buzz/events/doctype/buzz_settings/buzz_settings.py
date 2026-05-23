@@ -25,11 +25,15 @@ class BuzzSettings(Document):
 		default_sponsor_deck_email_template: DF.Link | None
 		default_sponsor_deck_reply_to: DF.Data | None
 		default_ticket_email_template: DF.Link | None
+		default_ticket_whatsapp_message: DF.SmallText | None
+		default_whatsapp_country_code: DF.Data | None
 		event_proposal_banner_title: DF.Data | None
 		event_proposal_success_message: DF.MarkdownEditor | None
 		event_proposal_success_title: DF.Data | None
 		login_banner: DF.MarkdownEditor | None
 		support_email: DF.Data | None
+		ultramsg_api_url: DF.Data | None
+		ultramsg_token: DF.Password | None
 	# end: auto-generated types
 
 	def validate(self):

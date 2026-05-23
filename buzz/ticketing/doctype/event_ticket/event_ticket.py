@@ -25,6 +25,7 @@ class EventTicket(Document):
 		amended_from: DF.Link | None
 		attendee_email: DF.Data
 		attendee_name: DF.Data
+		attendee_phone: DF.Data | None
 		booking: DF.Link | None
 		coupon_used: DF.Link | None
 		event: DF.Link | None
@@ -54,6 +55,11 @@ class EventTicket(Document):
 			self.send_ticket_email()
 		except Exception as e:
 			frappe.log_error("Error sending ticket email: " + str(e))
+
+		try:
+			self.send_ticket_whatsapp()
+		except Exception as e:
+			frappe.log_error("Error sending ticket WhatsApp: " + str(e))
 
 		# TODO: bring back after we have templates
 		# try:
@@ -153,6 +159,44 @@ class EventTicket(Document):
 			now=now,
 			attachments=attachments,
 		)
+
+	def send_ticket_whatsapp(self):
+		if not frappe.get_cached_value("Buzz Event", self.event, "send_ticket_whatsapp"):
+			return
+
+		if not self.attendee_phone:
+			return
+
+		from buzz.integrations.ultramsg import send_whatsapp
+
+		event_doc = frappe.get_cached_doc("Buzz Event", self.event)
+		ticket_type_title = frappe.get_cached_value("Event Ticket Type", self.ticket_type, "title")
+		message_template = event_doc.ticket_whatsapp_message or frappe.db.get_single_value(
+			"Buzz Settings", "default_ticket_whatsapp_message"
+		)
+
+		args = {
+			"doc": self,
+			"event_doc": event_doc,
+			"event_title": event_doc.title,
+			"ticket_type": ticket_type_title,
+		}
+
+		if message_template:
+			message = frappe.render_template(message_template, args)
+		else:
+			message = frappe._(
+				"Hi {0}, your ticket for {1} is confirmed.\nTicket ID: {2}\nBooking Ref: {3}\nPlease keep this message for event check-in."
+			).format(self.attendee_name, event_doc.title, self.name, self.booking or "-")
+
+		result = send_whatsapp(self.attendee_phone, message)
+		if not result.get("success"):
+			frappe.log_error(
+				title="Ticket WhatsApp Failed",
+				message=f"Ticket: {self.name}\nPhone: {self.attendee_phone}\nError: {result.get('error')}",
+			)
+
+		return result
 
 	def validate_coupon_usage(self):
 		if not self.coupon_used:

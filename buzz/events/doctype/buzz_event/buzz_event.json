@@ -65,9 +65,11 @@
   "sponsor_deck_attachments",
   "customisations_tab",
   "send_ticket_email",
+  "send_ticket_whatsapp",
   "section_break_uoke",
   "attach_calendar_invite",
   "ticket_email_template",
+  "ticket_whatsapp_message",
   "column_break_ukql",
   "attach_email_ticket",
   "ticket_print_format",
@@ -272,6 +274,13 @@
    "options": "Email Template"
   },
   {
+   "depends_on": "eval:doc.send_ticket_whatsapp;",
+   "description": "Supports Jinja variables: doc, event_doc, event_title, ticket_type. Defaults to Buzz Settings when empty.",
+   "fieldname": "ticket_whatsapp_message",
+   "fieldtype": "Small Text",
+   "label": "Ticket WhatsApp Message"
+  },
+  {
    "fieldname": "customisations_tab",
    "fieldtype": "Tab Break",
    "label": "Customisations"
@@ -468,6 +477,12 @@
    "fieldname": "send_ticket_email",
    "fieldtype": "Check",
    "label": "Send Ticket Email"
+  },
+  {
+   "default": "0",
+   "fieldname": "send_ticket_whatsapp",
+   "fieldtype": "Check",
+   "label": "Send Ticket WhatsApp"
   },
   {
    "fieldname": "section_break_rmtj",

@@ -2,7 +2,7 @@
 # See license.txt
 
 import frappe
-from frappe.tests import IntegrationTestCase
+from frappe.tests.utils import FrappeTestCase
 
 # On IntegrationTestCase, the doctype test records and all
 # link-field test record dependencies are recursively loaded
@@ -14,7 +14,7 @@ TEST_ADD_ON_PRICE = 100
 TEST_VIP_TICKET_TYPE_PRICE = 500
 
 
-class IntegrationTestEventBooking(IntegrationTestCase):
+class IntegrationTestEventBooking(FrappeTestCase):
 	"""
 	Integration tests for EventBooking.
 	Use this class for testing interactions between multiple components.
@@ -464,7 +464,7 @@ class IntegrationTestEventBooking(IntegrationTestCase):
 		self.assertEqual(custom_param.value, "special_offer")
 
 
-class TestProcessBookingAPI(IntegrationTestCase):
+class TestProcessBookingAPI(FrappeTestCase):
 	"""Test the process_booking API endpoint for UTM parameter handling."""
 
 	def test_process_booking_with_utm_parameters(self):
@@ -483,15 +483,17 @@ class TestProcessBookingAPI(IntegrationTestCase):
 			}
 		).insert()
 
-		# Disable tax at event level
-		test_event.apply_tax = False
-		test_event.save()
+		# Disable tax and make the event live for the public booking API.
+		test_event.db_set("apply_tax", 0, update_modified=False, commit=True)
+		test_event.db_set("is_published", 1, update_modified=False, commit=True)
+		test_event.db_set("send_ticket_whatsapp", 0, update_modified=False, commit=True)
+		frappe.clear_document_cache("Buzz Event", str(test_event.name))
 
 		attendees = [
 			{
 				"first_name": "API Test User",
 				"email": "apitest@email.com",
-				"phone": "+1 555 0100",
+				"phone": "+14155552671",
 				"ticket_type": str(test_ticket_type.name),
 				"add_ons": [],
 			}
@@ -516,8 +518,11 @@ class TestProcessBookingAPI(IntegrationTestCase):
 
 		# Fetch the booking and verify UTM parameters
 		booking = frappe.get_doc("Event Booking", result["booking_name"])
-		self.assertEqual(booking.attendees[0].phone, "+1 555 0100")
+		self.assertEqual(booking.attendees[0].phone, "+14155552671")
 		self.assertEqual(len(booking.utm_parameters), 5)
+
+		ticket = frappe.get_doc("Event Ticket", {"booking": booking.name})
+		self.assertEqual(ticket.attendee_phone, "+14155552671")
 
 		# Verify each UTM parameter
 		utm_dict = {p.utm_name: p.value for p in booking.utm_parameters}

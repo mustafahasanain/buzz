@@ -13,10 +13,12 @@ const FIELD_LABELS = {
 	guest_verification_method: __("Guest Verification Method"),
 	time_zone: __("Time Zone"),
 	send_ticket_email: __("Send Ticket Email"),
+	send_ticket_whatsapp: __("Send Ticket WhatsApp"),
 	apply_tax: __("Tax Settings"),
 	tax_label: __("Tax Label"),
 	tax_percentage: __("Tax Percentage"),
 	ticket_email_template: __("Ticket Email Template"),
+	ticket_whatsapp_message: __("Ticket WhatsApp Message"),
 	ticket_print_format: __("Ticket Print Format"),
 	auto_send_pitch_deck: __("Auto Send Pitch Deck"),
 	sponsor_deck_email_template: __("Sponsor Deck Email Template"),
@@ -98,10 +100,12 @@ function render_save_template_options(dialog, frm) {
 	html += render_save_template_field_group(
 		[
 			"send_ticket_email",
+			"send_ticket_whatsapp",
 			"apply_tax",
 			"tax_label",
 			"tax_percentage",
 			"ticket_email_template",
+			"ticket_whatsapp_message",
 			"ticket_print_format",
 		],
 		doc

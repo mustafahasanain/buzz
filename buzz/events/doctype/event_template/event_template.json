@@ -38,7 +38,9 @@
   "sponsor_deck_attachments",
   "customisations_tab",
   "send_ticket_email",
+  "send_ticket_whatsapp",
   "ticket_email_template",
+  "ticket_whatsapp_message",
   "column_break_custom",
   "ticket_print_format",
   "ticket_types_tab",
@@ -232,10 +234,23 @@
    "label": "Send Ticket Email"
   },
   {
+   "default": "0",
+   "fieldname": "send_ticket_whatsapp",
+   "fieldtype": "Check",
+   "label": "Send Ticket WhatsApp"
+  },
+  {
    "fieldname": "ticket_email_template",
    "fieldtype": "Link",
    "label": "Ticket Email Template",
    "options": "Email Template"
+  },
+  {
+   "depends_on": "eval:doc.send_ticket_whatsapp;",
+   "description": "Supports Jinja variables: doc, event_doc, event_title, ticket_type.",
+   "fieldname": "ticket_whatsapp_message",
+   "fieldtype": "Small Text",
+   "label": "Ticket WhatsApp Message"
   },
   {
    "fieldname": "column_break_custom",

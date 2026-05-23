@@ -28,6 +28,13 @@
   "communications_tab",
   "ticketing_emails_section",
   "default_ticket_email_template",
+  "ticketing_whatsapp_section",
+  "ultramsg_api_url",
+  "column_break_whatsapp_credentials",
+  "ultramsg_token",
+  "column_break_whatsapp_defaults",
+  "default_whatsapp_country_code",
+  "default_ticket_whatsapp_message",
   "sponsorship_emails_section",
   "auto_send_pitch_deck",
   "sponsor_email_settings_section",
@@ -158,6 +165,42 @@
    "fieldtype": "Link",
    "label": "Default Ticket Email Template",
    "options": "Email Template"
+  },
+  {
+   "fieldname": "ticketing_whatsapp_section",
+   "fieldtype": "Section Break",
+   "label": "Ticketing WhatsApp"
+  },
+  {
+   "description": "e.g. https://api.ultramsg.com/instance12345",
+   "fieldname": "ultramsg_api_url",
+   "fieldtype": "Data",
+   "label": "UltraMSG API URL"
+  },
+  {
+   "fieldname": "ultramsg_token",
+   "fieldtype": "Password",
+   "label": "UltraMSG Token"
+  },
+  {
+   "description": "e.g. 964 for Iraq. Used to normalize local phone numbers.",
+   "fieldname": "default_whatsapp_country_code",
+   "fieldtype": "Data",
+   "label": "Default WhatsApp Country Code"
+  },
+  {
+   "description": "Supports Jinja variables: doc, event_doc, event_title, ticket_type.",
+   "fieldname": "default_ticket_whatsapp_message",
+   "fieldtype": "Small Text",
+   "label": "Default Ticket WhatsApp Message"
+  },
+  {
+   "fieldname": "column_break_whatsapp_credentials",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_whatsapp_defaults",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "sponsorship_emails_section",
