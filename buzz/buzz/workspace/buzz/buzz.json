@@ -10,7 +10,7 @@
  "idx": 0,
  "indicator_color": "green",
  "is_hidden": 0,
- "label": "Buzz",
+ "label": "E2 Event",
  "link_type": "DocType",
  "links": [],
  "modified": "2026-03-05 19:24:18.378896",
@@ -24,6 +24,6 @@
  "roles": [],
  "sequence_id": 0.0,
  "shortcuts": [],
- "title": "Buzz",
+ "title": "E2 Event",
  "type": "Workspace"
 }

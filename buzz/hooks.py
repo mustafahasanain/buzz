@@ -1,5 +1,5 @@
 app_name = "buzz"
-app_title = "Buzz"
+app_title = "E2 Event"
 app_publisher = "BWH Studios"
 app_description = "Event Management App built on Frappe"
 app_email = "hussain@buildwithhussain.com"
@@ -59,7 +59,7 @@ add_to_apps_screen = [
 	{
 		"name": "buzz",
 		"logo": "/assets/buzz/images/buzz-logo-rounded.png",
-		"title": "Buzz",
+		"title": "E2 Event",
 		"route": "/app/buzz",
 		"has_permission": "buzz.api.has_app_permission",
 	}

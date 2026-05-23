@@ -8,7 +8,7 @@ CRM_INTEGRATION_CUSTOM_FIELDS = {
 	"CRM Lead": [
 		{
 			"fieldname": "buzz_tab",
-			"label": "Buzz",
+			"label": "E2 Event",
 			"fieldtype": "Tab Break",
 			"insert_after": "facebook_form_id",
 		},
