@@ -13,6 +13,7 @@
   "custom_fields",
   "column_break_xmfr",
   "email",
+  "phone",
   "amount",
   "currency",
   "add_ons",
@@ -50,6 +51,12 @@
    "label": "Email",
    "options": "Email",
    "reqd": 1
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Phone",
+   "in_list_view": 1,
+   "label": "Phone"
   },
   {
    "fieldname": "ticket_type",

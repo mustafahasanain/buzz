@@ -7,7 +7,12 @@
 
 		<div class="flex justify-between items-start mb-4 border-b pb-2">
 			<h4 class="text-lg font-semibold text-ink-gray-9">
-				{{ __("Attendee") }} #{{ index + 1 }}
+				<template v-if="isGuestMode && index === 0">
+					{{ __("Your Details") }}
+				</template>
+				<template v-else>
+					{{ __("Attendee") }} #{{ index + 1 }}
+				</template>
 			</h4>
 
 			<Tooltip :text="__('Remove Attendee')" :hover-delay="0.5">
@@ -43,6 +48,16 @@
 				:placeholder="__('Enter email address')"
 				required
 				type="email"
+			/>
+			<PhoneInput
+				v-model="attendee.phone"
+				:label="__('Phone')"
+				:placeholder="__('Enter phone number')"
+				:required="
+					isGuestMode &&
+					index === 0 &&
+					eventDetails.guest_verification_method === 'Phone OTP'
+				"
 			/>
 
 			<!-- Ticket Type -->
@@ -120,6 +135,7 @@ import { getFieldDefaultValue } from "@/composables/useCustomFields";
 import { formatPriceOrFree } from "@/utils/currency";
 import { Tooltip } from "frappe-ui";
 import CustomFieldInput from "./CustomFieldInput.vue";
+import PhoneInput from "./PhoneInput.vue";
 
 const props = defineProps({
 	attendee: { type: Object, required: true },
@@ -128,6 +144,7 @@ const props = defineProps({
 	availableAddOns: { type: Array, required: true },
 	customFields: { type: Array, default: () => [] },
 	showRemove: { type: Boolean, default: false },
+	isGuestMode: { type: Boolean, default: false },
 	eventDetails: {
 		type: Object,
 		required: false,

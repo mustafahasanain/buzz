@@ -444,6 +444,7 @@ def process_booking(
 			"first_name": first_name,
 			"last_name": last_name,
 			"email": attendee.get("email"),
+			"phone": (attendee.get("phone") or "").strip() or None,
 			"ticket_type": attendee.get("ticket_type"),
 			"add_ons": add_ons.name if add_ons else None,
 			"custom_fields": custom_fields if custom_fields else None,

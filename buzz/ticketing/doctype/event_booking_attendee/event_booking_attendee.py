@@ -27,6 +27,7 @@ class EventBookingAttendee(Document):
 		parent: DF.Data
 		parentfield: DF.Data
 		parenttype: DF.Data
+		phone: DF.Phone | None
 		ticket_type: DF.Link
 	# end: auto-generated types
 

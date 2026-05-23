@@ -491,6 +491,7 @@ class TestProcessBookingAPI(IntegrationTestCase):
 			{
 				"first_name": "API Test User",
 				"email": "apitest@email.com",
+				"phone": "+1 555 0100",
 				"ticket_type": str(test_ticket_type.name),
 				"add_ons": [],
 			}
@@ -515,6 +516,7 @@ class TestProcessBookingAPI(IntegrationTestCase):
 
 		# Fetch the booking and verify UTM parameters
 		booking = frappe.get_doc("Event Booking", result["booking_name"])
+		self.assertEqual(booking.attendees[0].phone, "+1 555 0100")
 		self.assertEqual(len(booking.utm_parameters), 5)
 
 		# Verify each UTM parameter

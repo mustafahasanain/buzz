@@ -21,6 +21,8 @@ export interface EventBookingAttendee {
 	custom_fields?: any
 	/**	Email : Data	*/
 	email: string
+	/**	Phone : Phone	*/
+	phone?: string
 	/**	Amount : Currency	*/
 	amount?: number
 	/**	Currency : Link - Currency	*/

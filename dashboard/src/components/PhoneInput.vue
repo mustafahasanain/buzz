@@ -33,11 +33,12 @@ const props = defineProps({
 	label: { type: String, default: "Phone" },
 	placeholder: { type: String, default: "" },
 	required: { type: Boolean, default: false },
+	defaultDialCode: { type: String, default: "+964" },
 });
 
 const emit = defineEmits(["update:modelValue"]);
 
-const dialCode = ref("+91");
+const dialCode = ref(props.defaultDialCode);
 const localNumber = ref("");
 const dialCodesData = ref([]);
 
@@ -58,7 +59,7 @@ const shortDisplay = computed(() => {
 
 const dialCodeOptions = computed(() =>
 	dialCodesData.value.map((d) => ({
-		label: `${getFlagEmoji(d.code)} ${d.dial_code}`,
+		label: `${getFlagEmoji(d.code)} ${d.country} ${d.dial_code}`,
 		value: d.dial_code,
 	}))
 );

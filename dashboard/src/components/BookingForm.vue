@@ -21,7 +21,7 @@
 			<template #body-content>
 				<p class="text-sm text-ink-gray-6 mb-4">
 					{{ __("Enter the 6-digit code sent to") }}
-					<strong>{{ isPhoneOtp ? guestPhone : guestEmail }}</strong>
+					<strong>{{ guestVerificationIdentifier }}</strong>
 				</p>
 				<FormControl
 					v-model="otpCode"
@@ -76,13 +76,13 @@
 					</template>
 					<template v-else>
 						{{ __("Your tickets have been sent to") }}
-						<strong>{{ guestEmail }}</strong>
+						<strong>{{ successContactEmail || guestContactEmail }}</strong>
 					</template>
 				</p>
 				<p class="text-sm text-green-600 mb-6">
 					<template v-if="isWebinar">
 						{{ __("You will receive an invite at") }}
-						<strong>{{ guestEmail }}</strong>
+						<strong>{{ successContactEmail || guestContactEmail }}</strong>
 						{{ __("shortly.") }}
 					</template>
 					<template v-else-if="eventDetails.send_ticket_email">
@@ -115,50 +115,6 @@
 			<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 				<!-- Left Side: Form Inputs -->
 				<div class="lg:col-span-2">
-					<!-- Guest Contact Section -->
-					<div
-						v-if="props.isGuestMode"
-						class="bg-surface-white border border-outline-gray-3 rounded-xl p-4 md:p-6 mb-6 shadow-sm"
-					>
-						<h3 class="text-sm font-semibold text-ink-gray-8 mb-4">
-							{{ __("Your Details") }}
-						</h3>
-						<div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-							<FormControl
-								v-model="guestFirstName"
-								type="text"
-								:label="__('First Name')"
-								:placeholder="__('Enter your first name')"
-								required
-								@blur="prefillAttendee('name')"
-							/>
-							<FormControl
-								v-model="guestLastName"
-								type="text"
-								:label="__('Last Name')"
-								:placeholder="__('Enter your last name')"
-								:required="isWebinar"
-								@blur="prefillAttendee('name')"
-							/>
-							<FormControl
-								v-model="guestEmail"
-								type="email"
-								:label="__('Email Address')"
-								:placeholder="__('Enter your email')"
-								required
-								@blur="prefillAttendee('email')"
-							/>
-							<FormControl
-								v-if="props.eventDetails.guest_verification_method === 'Phone OTP'"
-								v-model="guestPhone"
-								type="tel"
-								:label="__('Phone Number')"
-								:placeholder="__('Enter your phone number')"
-								required
-							/>
-						</div>
-					</div>
-
 					<!-- Booking-level Custom Fields -->
 					<div
 						v-if="bookingCustomFields.length > 0"
@@ -189,6 +145,7 @@
 						:custom-fields="ticketCustomFields"
 						:show-remove="attendees.length > 1"
 						:eventDetails="eventDetails"
+						:is-guest-mode="props.isGuestMode"
 						@remove="removeAttendee(index)"
 					/>
 
@@ -502,7 +459,14 @@ const {
 	billingAddress,
 } = useBookingFormStorage(props.eventRoute);
 
-const guestFullName = computed(() => `${guestFirstName.value} ${guestLastName.value}`.trim());
+const primaryAttendee = computed(() => attendees.value[0] || {});
+const guestContactFirstName = computed(() => (primaryAttendee.value.first_name || "").trim());
+const guestContactLastName = computed(() => (primaryAttendee.value.last_name || "").trim());
+const guestContactEmail = computed(() => (primaryAttendee.value.email || "").trim());
+const guestContactPhone = computed(() => (primaryAttendee.value.phone || "").trim());
+const guestContactFullName = computed(() =>
+	`${guestContactFirstName.value} ${guestContactLastName.value}`.trim()
+);
 
 // Use stored booking custom fields data
 const bookingCustomFieldsData = storedBookingCustomFields;
@@ -541,6 +505,7 @@ const couponData = ref(null);
 // Success state for guest bookings
 const bookingSuccess = ref(false);
 const successBookingName = ref("");
+const successContactEmail = ref("");
 
 // OTP verification state for guest bookings
 const showOtpModal = ref(false);
@@ -598,6 +563,7 @@ const createNewAttendee = () => {
 		first_name: "",
 		last_name: "",
 		email: "",
+		phone: "",
 		// Use default ticket type from event details, or first available
 		ticket_type: getDefaultTicketType(),
 		add_ons: {},
@@ -824,10 +790,11 @@ onMounted(async () => {
 	if (attendees.value.length === 0 && props.availableTicketTypes.length > 0) {
 		const newAttendee = createNewAttendee();
 
-		if (guestFirstName.value || guestEmail.value) {
+		if (guestFirstName.value || guestEmail.value || guestPhone.value) {
 			newAttendee.first_name = guestFirstName.value;
 			newAttendee.last_name = guestLastName.value;
 			newAttendee.email = guestEmail.value;
+			newAttendee.phone = guestPhone.value;
 		} else if (userResource.data) {
 			newAttendee.first_name = userResource.data.first_name || "";
 			newAttendee.last_name = userResource.data.last_name || "";
@@ -927,16 +894,6 @@ watch(matchingAttendeesCount, (newCount) => {
 	}
 });
 
-function prefillAttendee(field) {
-	if (!props.isGuestMode || !attendees.value.length) return;
-	const first = attendees.value[0];
-	if (field === "name") {
-		if (!first.first_name) first.first_name = guestFirstName.value;
-		if (!first.last_name) first.last_name = guestLastName.value;
-	}
-	if (field === "email" && !first.email) first.email = guestEmail.value;
-}
-
 const processBooking = createResource({
 	url: "buzz.api.process_booking",
 });
@@ -973,11 +930,14 @@ const sendOtpResource = createResource({
 });
 
 const isPhoneOtp = computed(() => props.eventDetails.guest_verification_method === "Phone OTP");
+const guestVerificationIdentifier = computed(() =>
+	isPhoneOtp.value ? guestContactPhone.value : guestContactEmail.value
+);
 
 function sendOtpForVerification() {
 	sendOtpResource.submit({
 		event: props.eventDetails.name,
-		identifier: isPhoneOtp.value ? guestPhone.value.trim() : guestEmail.value.trim(),
+		identifier: guestVerificationIdentifier.value,
 	});
 }
 
@@ -1000,8 +960,8 @@ async function applyCoupon() {
 			event: eventId.value,
 		};
 		// Pass user email for guest mode to properly check per-user limits
-		if (props.isGuestMode && guestEmail.value.trim()) {
-			params.user_email = guestEmail.value.trim().toLowerCase();
+		if (props.isGuestMode && guestContactEmail.value) {
+			params.user_email = guestContactEmail.value.toLowerCase();
 		}
 		result = await validateCoupon.submit(params);
 	} catch (error) {
@@ -1179,33 +1139,33 @@ async function submit() {
 		booking_custom_fields:
 			Object.keys(cleanedBookingCustomFields).length > 0 ? cleanedBookingCustomFields : null,
 		utm_parameters: utmParameters.length > 0 ? utmParameters : null,
-		guest_email: props.isGuestMode ? guestEmail.value.trim() : null,
-		guest_full_name: props.isGuestMode ? guestFullName.value.trim() : null,
-		guest_phone: props.isGuestMode && isPhoneOtp.value ? guestPhone.value.trim() : null,
+		guest_email: props.isGuestMode ? guestContactEmail.value : null,
+		guest_full_name: props.isGuestMode ? guestContactFullName.value : null,
+		guest_phone: props.isGuestMode && isPhoneOtp.value ? guestContactPhone.value : null,
 		invoice_requested: invoiceRequested.value,
 		tax_id: invoiceRequested.value ? taxId.value?.trim() : null,
 		billing_address: invoiceRequested.value ? billingAddress.value?.trim() : null,
 	};
 
 	if (props.isGuestMode) {
-		if (!guestFirstName.value.trim()) {
+		if (!guestContactFirstName.value) {
 			toast.error(__("Please enter your first name"));
 			return;
 		}
-		if (isWebinar.value && !guestLastName.value.trim()) {
+		if (isWebinar.value && !guestContactLastName.value) {
 			toast.error(__("Please enter your last name"));
 			return;
 		}
-		if (!guestEmail.value.trim()) {
+		if (!guestContactEmail.value) {
 			toast.error(__("Please enter your email address"));
 			return;
 		}
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(guestEmail.value.trim())) {
+		if (!emailRegex.test(guestContactEmail.value)) {
 			toast.error(__("Please enter a valid email address"));
 			return;
 		}
-		if (isPhoneOtp.value && !guestPhone.value.trim()) {
+		if (isPhoneOtp.value && !guestContactPhone.value) {
 			toast.error(__("Please enter your phone number"));
 			return;
 		}
@@ -1268,6 +1228,7 @@ function submitBooking(payload, paymentGateway, { isOtpFlow = false } = {}) {
 		},
 		{
 			onSuccess: (data) => {
+				successContactEmail.value = payload.guest_email || guestContactEmail.value;
 				clearBookingCache();
 
 				if (isOtpFlow) {
