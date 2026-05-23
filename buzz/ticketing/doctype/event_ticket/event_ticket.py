@@ -167,7 +167,7 @@ class EventTicket(Document):
 		if not self.attendee_phone:
 			return
 
-		from buzz.integrations.ultramsg import send_whatsapp
+		from buzz.integrations.ultramsg import send_whatsapp, send_whatsapp_image
 
 		event_doc = frappe.get_cached_doc("Buzz Event", self.event)
 		ticket_type_title = frappe.get_cached_value("Event Ticket Type", self.ticket_type, "title")
@@ -187,14 +187,54 @@ class EventTicket(Document):
 				"Hi {0}, your ticket for {1} is confirmed.\nTicket ID: {2}\nBooking Ref: {3}\nPlease keep this message for event check-in."
 			).format(self.attendee_name, event_doc.title, self.name, self.booking or "-")
 
-		result = send_whatsapp(self.attendee_phone, message)
-		if not result.get("success"):
+		message_result = send_whatsapp(self.attendee_phone, message)
+		if not message_result.get("success"):
 			frappe.log_error(
 				title="Ticket WhatsApp Failed",
-				message=f"Ticket: {self.name}\nPhone: {self.attendee_phone}\nError: {result.get('error')}",
+				message=f"Ticket: {self.name}\nPhone: {self.attendee_phone}\nError: {message_result.get('error')}",
 			)
+			return message_result
 
-		return result
+		qr_image = self.get_qr_code_image_base64()
+		if not qr_image:
+			return {"success": False, "error": "Ticket QR code image is not available"}
+
+		qr_caption = frappe._("Entry QR code for ticket {0}").format(self.name)
+		qr_result = send_whatsapp_image(self.attendee_phone, qr_image, caption=qr_caption)
+		if not qr_result.get("success"):
+			frappe.log_error(
+				title="Ticket QR WhatsApp Failed",
+				message=f"Ticket: {self.name}\nPhone: {self.attendee_phone}\nError: {qr_result.get('error')}",
+			)
+			return qr_result
+
+		return {"success": True, "message_result": message_result, "qr_result": qr_result}
+
+	def get_qr_code_image_base64(self):
+		import base64
+
+		if not self.qr_code:
+			self.generate_qr_code()
+			if not self.is_new():
+				self.db_set("qr_code", self.qr_code, update_modified=False)
+
+		file_name = frappe.db.get_value(
+			"File",
+			{
+				"file_url": self.qr_code,
+				"attached_to_doctype": self.doctype,
+				"attached_to_name": self.name,
+				"attached_to_field": "qr_code",
+			},
+		)
+		if not file_name:
+			file_name = frappe.db.get_value("File", {"file_url": self.qr_code})
+
+		if not file_name:
+			return None
+
+		file_doc = frappe.get_doc("File", file_name)
+		return base64.b64encode(file_doc.get_content()).decode("ascii")
 
 	def get_ticket_whatsapp_message_template(self, event_doc):
 		if event_doc.ticket_whatsapp_message:

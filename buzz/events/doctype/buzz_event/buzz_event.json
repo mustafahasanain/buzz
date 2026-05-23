@@ -576,6 +576,11 @@
    "link_fieldname": "event"
   },
   {
+   "group": "General",
+   "link_doctype": "Event Evaluation",
+   "link_fieldname": "event"
+  },
+  {
    "group": "Ticketing",
    "link_doctype": "Buzz Coupon Code",
    "link_fieldname": "event"

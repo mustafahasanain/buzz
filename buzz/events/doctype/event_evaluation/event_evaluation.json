@@ -1,0 +1,310 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:EV-EVAL-{#####}",
+ "creation": "2026-05-23 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "event",
+  "evaluation_date",
+  "column_break_reference",
+  "booking",
+  "ticket",
+  "customer_section",
+  "customer",
+  "customer_name",
+  "column_break_customer",
+  "customer_email",
+  "customer_phone",
+  "ratings_section",
+  "overall_rating",
+  "organization_rating",
+  "venue_rating",
+  "content_rating",
+  "speaker_rating",
+  "column_break_ratings",
+  "staff_rating",
+  "value_rating",
+  "likelihood_to_recommend",
+  "questions_section",
+  "attended_before",
+  "would_attend_again",
+  "would_recommend",
+  "favorite_part",
+  "how_can_we_improve",
+  "topics_for_future",
+  "additional_comments",
+  "admin_section",
+  "asked_by",
+  "asked_on",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "event",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Event",
+   "options": "Buzz Event",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "evaluation_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Evaluation Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_reference",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "booking",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Booking",
+   "options": "Event Booking"
+  },
+  {
+   "fieldname": "ticket",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Ticket",
+   "options": "Event Ticket"
+  },
+  {
+   "fieldname": "customer_section",
+   "fieldtype": "Section Break",
+   "label": "Customer"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "options": "User"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_customer",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer_email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Email",
+   "options": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_phone",
+   "fieldtype": "Phone",
+   "label": "Customer Phone"
+  },
+  {
+   "fieldname": "ratings_section",
+   "fieldtype": "Section Break",
+   "label": "Ratings"
+  },
+  {
+   "description": "1 = Poor, 5 = Excellent",
+   "fieldname": "overall_rating",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Overall Rating",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "description": "1 = Poor, 5 = Excellent",
+   "fieldname": "organization_rating",
+   "fieldtype": "Int",
+   "label": "Organization Rating",
+   "non_negative": 1
+  },
+  {
+   "description": "1 = Poor, 5 = Excellent",
+   "fieldname": "venue_rating",
+   "fieldtype": "Int",
+   "label": "Venue Rating",
+   "non_negative": 1
+  },
+  {
+   "description": "1 = Poor, 5 = Excellent",
+   "fieldname": "content_rating",
+   "fieldtype": "Int",
+   "label": "Content Rating",
+   "non_negative": 1
+  },
+  {
+   "description": "1 = Poor, 5 = Excellent",
+   "fieldname": "speaker_rating",
+   "fieldtype": "Int",
+   "label": "Speaker Rating",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "column_break_ratings",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "1 = Poor, 5 = Excellent",
+   "fieldname": "staff_rating",
+   "fieldtype": "Int",
+   "label": "Staff Rating",
+   "non_negative": 1
+  },
+  {
+   "description": "1 = Poor, 5 = Excellent",
+   "fieldname": "value_rating",
+   "fieldtype": "Int",
+   "label": "Value Rating",
+   "non_negative": 1
+  },
+  {
+   "description": "0 = Not likely, 10 = Very likely",
+   "fieldname": "likelihood_to_recommend",
+   "fieldtype": "Int",
+   "label": "Likelihood to Recommend",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "questions_section",
+   "fieldtype": "Section Break",
+   "label": "Questions"
+  },
+  {
+   "fieldname": "attended_before",
+   "fieldtype": "Select",
+   "label": "Has the customer attended one of our events before?",
+   "options": "\nYes\nNo\nNot Sure"
+  },
+  {
+   "fieldname": "would_attend_again",
+   "fieldtype": "Select",
+   "label": "Would the customer attend again?",
+   "options": "\nYes\nNo\nMaybe"
+  },
+  {
+   "fieldname": "would_recommend",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Would the customer recommend this event?",
+   "options": "\nYes\nNo\nMaybe"
+  },
+  {
+   "fieldname": "favorite_part",
+   "fieldtype": "Small Text",
+   "label": "What was the customer's favorite part?"
+  },
+  {
+   "fieldname": "how_can_we_improve",
+   "fieldtype": "Small Text",
+   "label": "How can we improve?"
+  },
+  {
+   "fieldname": "topics_for_future",
+   "fieldtype": "Small Text",
+   "label": "What topics or activities should we add in future events?"
+  },
+  {
+   "fieldname": "additional_comments",
+   "fieldtype": "Text",
+   "label": "Additional Comments"
+  },
+  {
+   "fieldname": "admin_section",
+   "fieldtype": "Section Break",
+   "label": "Admin"
+  },
+  {
+   "fieldname": "asked_by",
+   "fieldtype": "Link",
+   "label": "Asked By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "asked_on",
+   "fieldtype": "Datetime",
+   "label": "Asked On",
+   "read_only": 1
+  },
+  {
+   "default": "Completed",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nCompleted\nNeeds Follow-up"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-05-23 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Events",
+ "name": "Event Evaluation",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Event Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Buzz User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "event,customer_name,customer_email,ticket,booking",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "customer_name",
+ "track_changes": 1
+}

@@ -95,11 +95,9 @@ def make_qr_image(data: str) -> bytes:
 	import io
 
 	import qrcode
-	from qrcode.image.styledpil import StyledPilImage
-	from qrcode.image.styles.moduledrawers.pil import HorizontalBarsDrawer
 
 	qr = qrcode.QRCode(
-		version=1,
+		version=None,
 		error_correction=qrcode.constants.ERROR_CORRECT_H,
 		box_size=10,
 		border=4,
@@ -107,7 +105,7 @@ def make_qr_image(data: str) -> bytes:
 	qr.add_data(data)
 	qr.make(fit=True)
 
-	img = qr.make_image(image_factory=StyledPilImage, module_drawer=HorizontalBarsDrawer())
+	img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
 	output = io.BytesIO()
 	img.save(output, format="PNG")
 	return output.getvalue()

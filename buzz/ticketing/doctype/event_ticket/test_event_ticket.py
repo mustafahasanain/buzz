@@ -1,10 +1,13 @@
 # Copyright (c) 2025, BWH Studios and Contributors
 # See license.txt
 
+import base64
+import io
 from unittest.mock import patch
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
+from PIL import Image
 
 from buzz.utils import generate_qr_code_file, make_qr_image
 
@@ -211,13 +214,21 @@ class TestEventTicketWhatsApp(FrappeTestCase):
 		result = self.test_ticket.send_ticket_whatsapp()
 
 		self.assertTrue(result["success"])
-		mock_post.assert_called_once()
-		endpoint = mock_post.call_args[0][0]
-		payload = mock_post.call_args[1]["data"]
+		self.assertEqual(mock_post.call_count, 2)
+		endpoint = mock_post.call_args_list[0][0][0]
+		payload = mock_post.call_args_list[0][1]["data"]
 		self.assertEqual(endpoint, "https://api.ultramsg.com/instance12345/messages/chat")
 		self.assertEqual(payload["to"], "9647701234567")
 		self.assertEqual(payload["token"], "test-token")
 		self.assertIn(self.test_ticket.name, payload["body"])
+
+		qr_endpoint = mock_post.call_args_list[1][0][0]
+		qr_payload = mock_post.call_args_list[1][1]["data"]
+		self.assertEqual(qr_endpoint, "https://api.ultramsg.com/instance12345/messages/image")
+		self.assertEqual(qr_payload["to"], "9647701234567")
+		self.assertEqual(qr_payload["token"], "test-token")
+		self.assertIn(self.test_ticket.name, qr_payload["caption"])
+		self.assertTrue(base64.b64decode(qr_payload["image"]).startswith(b"\x89PNG"))
 
 	@patch("buzz.integrations.ultramsg.requests.post")
 	def test_skips_whatsapp_when_disabled(self, mock_post):
@@ -244,7 +255,7 @@ class TestEventTicketWhatsApp(FrappeTestCase):
 		result = self.test_ticket.send_ticket_whatsapp()
 
 		self.assertTrue(result["success"])
-		payload = mock_post.call_args[1]["data"]
+		payload = mock_post.call_args_list[0][1]["data"]
 		self.assertIn(f"Template ticket {self.test_ticket.name}", payload["body"])
 		self.assertIn("WhatsApp Test Ticket", payload["body"])
 
@@ -264,6 +275,13 @@ class TestQRCodeGeneration(FrappeTestCase):
 		self.assertIsInstance(result, bytes)
 		# PNG magic bytes
 		self.assertTrue(result.startswith(b"\x89PNG"))
+		image = Image.open(io.BytesIO(result))
+		self.assertEqual(image.format, "PNG")
+		self.assertEqual(image.mode, "RGB")
+		self.assertGreater(image.width, 0)
+		self.assertEqual(image.width, image.height)
+		self.assertIn((0, 0, 0), image.getdata())
+		self.assertIn((255, 255, 255), image.getdata())
 
 	def test_generate_qr_code_file_creates_attachment(self):
 		"""QR code file should be created and attached to document."""

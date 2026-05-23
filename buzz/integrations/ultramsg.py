@@ -61,7 +61,23 @@ def send_whatsapp(phone, message_body):
 
 	endpoint = f"{api_url}/messages/chat"
 	payload = {"token": token, "to": normalized_phone, "body": message_body}
+	return send_ultramsg_request(endpoint, payload)
 
+
+def send_whatsapp_image(phone, image, caption=None):
+	"""Send a WhatsApp image message via UltraMSG."""
+	api_url, token = get_ultramsg_settings()
+	normalized_phone = normalize_phone(phone)
+
+	endpoint = f"{api_url}/messages/image"
+	payload = {"token": token, "to": normalized_phone, "image": image}
+	if caption:
+		payload["caption"] = caption
+
+	return send_ultramsg_request(endpoint, payload)
+
+
+def send_ultramsg_request(endpoint, payload):
 	try:
 		response = requests.post(endpoint, data=payload, timeout=15)
 		result = response.json()
