@@ -150,6 +150,7 @@ class TestEventTicketWhatsApp(FrappeTestCase):
 
 	def setUp(self):
 		self.test_event.send_ticket_whatsapp = 0
+		self.test_event.ticket_whatsapp_template = None
 		self.test_event.ticket_whatsapp_message = None
 		self.test_event.save()
 
@@ -157,6 +158,7 @@ class TestEventTicketWhatsApp(FrappeTestCase):
 		settings.ultramsg_api_url = "https://api.ultramsg.com/instance12345"
 		settings.ultramsg_token = "test-token"
 		settings.default_whatsapp_country_code = "964"
+		settings.default_ticket_whatsapp_template = None
 		settings.default_ticket_whatsapp_message = None
 		settings.save()
 
@@ -185,6 +187,7 @@ class TestEventTicketWhatsApp(FrappeTestCase):
 		frappe.delete_doc("Event Ticket", self.test_ticket.name, force=True)
 		frappe.delete_doc("Event Ticket Type", self.test_ticket_type.name, force=True)
 		self.test_event.send_ticket_whatsapp = 0
+		self.test_event.ticket_whatsapp_template = None
 		self.test_event.ticket_whatsapp_message = None
 		self.test_event.save()
 
@@ -192,8 +195,11 @@ class TestEventTicketWhatsApp(FrappeTestCase):
 		settings.ultramsg_api_url = None
 		settings.ultramsg_token = None
 		settings.default_whatsapp_country_code = None
+		settings.default_ticket_whatsapp_template = None
 		settings.default_ticket_whatsapp_message = None
 		settings.save()
+
+		frappe.db.delete("Buzz WhatsApp Template", {"template_name": ["like", "Ticket WhatsApp Test%"]})
 
 	@patch("buzz.integrations.ultramsg.requests.post")
 	def test_sends_whatsapp_when_enabled(self, mock_post):
@@ -219,6 +225,28 @@ class TestEventTicketWhatsApp(FrappeTestCase):
 
 		self.assertIsNone(result)
 		mock_post.assert_not_called()
+
+	@patch("buzz.integrations.ultramsg.requests.post")
+	def test_uses_event_whatsapp_template(self, mock_post):
+		mock_post.return_value.json.return_value = {"sent": "true", "id": "msg-1"}
+		template = frappe.get_doc(
+			{
+				"doctype": "Buzz WhatsApp Template",
+				"template_name": "Ticket WhatsApp Test Event Template",
+				"template_type": "Ticket",
+				"message": "Template ticket {{ doc.name }} for {{ ticket_type }}",
+			}
+		).insert()
+		self.test_event.send_ticket_whatsapp = 1
+		self.test_event.ticket_whatsapp_template = template.name
+		self.test_event.save()
+
+		result = self.test_ticket.send_ticket_whatsapp()
+
+		self.assertTrue(result["success"])
+		payload = mock_post.call_args[1]["data"]
+		self.assertIn(f"Template ticket {self.test_ticket.name}", payload["body"])
+		self.assertIn("WhatsApp Test Ticket", payload["body"])
 
 
 class TestQRCodeGeneration(FrappeTestCase):

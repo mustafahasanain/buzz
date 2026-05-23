@@ -34,6 +34,7 @@
   "ultramsg_token",
   "column_break_whatsapp_defaults",
   "default_whatsapp_country_code",
+  "default_ticket_whatsapp_template",
   "default_ticket_whatsapp_message",
   "sponsorship_emails_section",
   "auto_send_pitch_deck",
@@ -187,6 +188,13 @@
    "fieldname": "default_whatsapp_country_code",
    "fieldtype": "Data",
    "label": "Default WhatsApp Country Code"
+  },
+  {
+   "description": "Default template for ticket confirmation WhatsApp messages. Can be overridden per event.",
+   "fieldname": "default_ticket_whatsapp_template",
+   "fieldtype": "Link",
+   "label": "Default Ticket WhatsApp Template",
+   "options": "Buzz WhatsApp Template"
   },
   {
    "description": "Supports Jinja variables: doc, event_doc, event_title, ticket_type.",

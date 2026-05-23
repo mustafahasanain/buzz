@@ -69,6 +69,7 @@ class BuzzEvent(Document):
 		tax_percentage: DF.Percent
 		ticket_email_template: DF.Link | None
 		ticket_print_format: DF.Link | None
+		ticket_whatsapp_template: DF.Link | None
 		ticket_whatsapp_message: DF.SmallText | None
 		time_zone: DF.Autocomplete | None
 		title: DF.Data
@@ -275,6 +276,7 @@ def create_from_template(template_name: str, options: str, additional_fields: st
 		"send_ticket_whatsapp": "send_ticket_whatsapp",
 		"ticket_email_template": "ticket_email_template",
 		"ticket_print_format": "ticket_print_format",
+		"ticket_whatsapp_template": "ticket_whatsapp_template",
 		"ticket_whatsapp_message": "ticket_whatsapp_message",
 		"apply_tax": "apply_tax",
 		"tax_inclusive": "tax_inclusive",

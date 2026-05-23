@@ -47,6 +47,7 @@ class EventTemplate(Document):
 		template_ticket_types: DF.Table[EventTemplateTicketType]
 		ticket_email_template: DF.Link | None
 		ticket_print_format: DF.Link | None
+		ticket_whatsapp_template: DF.Link | None
 		ticket_whatsapp_message: DF.SmallText | None
 		time_zone: DF.Autocomplete | None
 		venue: DF.Link | None
@@ -93,6 +94,7 @@ def create_template_from_event(event_name: str, template_name: str, options: str
 		"send_ticket_whatsapp": "send_ticket_whatsapp",
 		"ticket_email_template": "ticket_email_template",
 		"ticket_print_format": "ticket_print_format",
+		"ticket_whatsapp_template": "ticket_whatsapp_template",
 		"ticket_whatsapp_message": "ticket_whatsapp_message",
 		"apply_tax": "apply_tax",
 		"tax_label": "tax_label",

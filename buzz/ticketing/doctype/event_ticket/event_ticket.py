@@ -171,9 +171,7 @@ class EventTicket(Document):
 
 		event_doc = frappe.get_cached_doc("Buzz Event", self.event)
 		ticket_type_title = frappe.get_cached_value("Event Ticket Type", self.ticket_type, "title")
-		message_template = event_doc.ticket_whatsapp_message or frappe.db.get_single_value(
-			"Buzz Settings", "default_ticket_whatsapp_message"
-		)
+		message_template = self.get_ticket_whatsapp_message_template(event_doc)
 
 		args = {
 			"doc": self,
@@ -197,6 +195,31 @@ class EventTicket(Document):
 			)
 
 		return result
+
+	def get_ticket_whatsapp_message_template(self, event_doc):
+		if event_doc.ticket_whatsapp_message:
+			return event_doc.ticket_whatsapp_message
+
+		if event_doc.ticket_whatsapp_template:
+			template_message = frappe.db.get_value(
+				"Buzz WhatsApp Template", event_doc.ticket_whatsapp_template, "message"
+			)
+			if template_message:
+				return template_message
+
+		default_template, default_message = frappe.db.get_value(
+			"Buzz Settings",
+			"Buzz Settings",
+			["default_ticket_whatsapp_template", "default_ticket_whatsapp_message"],
+		)
+		if default_template:
+			template_message = frappe.db.get_value(
+				"Buzz WhatsApp Template", default_template, "message"
+			)
+			if template_message:
+				return template_message
+
+		return default_message
 
 	def validate_coupon_usage(self):
 		if not self.coupon_used:

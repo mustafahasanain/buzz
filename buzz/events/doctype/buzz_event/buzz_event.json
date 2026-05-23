@@ -69,6 +69,7 @@
   "section_break_uoke",
   "attach_calendar_invite",
   "ticket_email_template",
+  "ticket_whatsapp_template",
   "ticket_whatsapp_message",
   "column_break_ukql",
   "attach_email_ticket",
@@ -275,7 +276,14 @@
   },
   {
    "depends_on": "eval:doc.send_ticket_whatsapp;",
-   "description": "Supports Jinja variables: doc, event_doc, event_title, ticket_type. Defaults to Buzz Settings when empty.",
+   "fieldname": "ticket_whatsapp_template",
+   "fieldtype": "Link",
+   "label": "Ticket WhatsApp Template",
+   "options": "Buzz WhatsApp Template"
+  },
+  {
+   "depends_on": "eval:doc.send_ticket_whatsapp;",
+   "description": "Optional message override. Supports Jinja variables: doc, event_doc, event_title, ticket_type. Defaults to the selected template or Buzz Settings when empty.",
    "fieldname": "ticket_whatsapp_message",
    "fieldtype": "Small Text",
    "label": "Ticket WhatsApp Message"
