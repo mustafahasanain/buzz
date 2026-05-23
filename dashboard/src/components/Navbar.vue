@@ -2,12 +2,7 @@
 	<div class="border-b">
 		<nav class="flex items-center justify-between gap-4 p-4 max-w-4xl mx-auto">
 			<a href="/">
-				<img
-					class="h-6 contrast-100 brightness-100 invert-[0.8] dark:invert-0"
-					v-if="userResource?.data?.brand_image"
-					:src="userResource.data.brand_image"
-				/>
-				<BuzzLogo v-else class="w-9 h-7 text-ink-gray-9" />
+				<BuzzLogo class="w-[120px] h-7 text-ink-gray-9" />
 			</a>
 			<div class="flex items-center gap-2">
 				<Button variant="ghost" size="md" @click="toggleTheme">
@@ -40,7 +35,6 @@
 </template>
 
 <script setup>
-import { userResource } from "@/data/user";
 import LucideMoon from "~icons/lucide/moon";
 import LucideSun from "~icons/lucide/sun";
 import { session } from "../data/session";
