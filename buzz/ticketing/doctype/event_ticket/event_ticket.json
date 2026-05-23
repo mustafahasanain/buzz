@@ -119,7 +119,7 @@
    "fieldname": "coupon_used",
    "fieldtype": "Link",
    "label": "Coupon Used ",
-   "options": "Bulk Ticket Coupon"
+   "options": "Buzz Coupon Code"
   },
   {
    "fieldname": "section_break_ijdn",

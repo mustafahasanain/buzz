@@ -53,7 +53,7 @@
   - Inventory logic; tracks max tickets and remaining count.
 - `Ticket Add-on` + `Ticket Add-on Value` + `Attendee Ticket Add-on`
   - Add-on definitions and per-ticket selections.
-- `Bulk Ticket Coupon`
+- `Buzz Coupon Code`
   - Auto-generates code; limits usage via claimed count.
 - `Ticket Cancellation Request` + `Ticket Cancellation Item`
   - Cancel booking or specific tickets on acceptance.

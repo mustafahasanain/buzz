@@ -158,9 +158,16 @@ class EventTicket(Document):
 		if not self.coupon_used:
 			return
 
-		coupon = frappe.get_cached_doc("Bulk Ticket Coupon", self.coupon_used)
-		if coupon.is_used_up():
-			frappe.throw(frappe._("Coupon has been already used up maximum number of times!"))
+		coupon = frappe.get_cached_doc("Buzz Coupon Code", self.coupon_used)
+
+		if self.event:
+			is_valid, error_msg = coupon.is_valid_for_event(self.event)
+			if not is_valid:
+				frappe.throw(error_msg)
+
+		is_available, error_msg = coupon.is_usage_available()
+		if not is_available:
+			frappe.throw(error_msg)
 
 	def generate_qr_code(self):
 		self.qr_code = generate_qr_code_file(

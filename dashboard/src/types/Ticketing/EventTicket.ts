@@ -22,7 +22,7 @@ export interface EventTicket {
 	event?: string
 	/**	Booking : Link - Event Booking	*/
 	booking?: string
-	/**	Coupon Used  : Link - Bulk Ticket Coupon	*/
+	/**	Coupon Used  : Link - Buzz Coupon Code	*/
 	coupon_used?: string
 	/**	Attendee Email : Data	*/
 	attendee_email: string

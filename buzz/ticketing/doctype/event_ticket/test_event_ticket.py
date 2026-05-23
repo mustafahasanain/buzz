@@ -9,7 +9,7 @@ from frappe.tests import IntegrationTestCase
 from buzz.utils import generate_qr_code_file, make_qr_image
 
 EXTRA_TEST_RECORD_DEPENDENCIES = []
-IGNORE_TEST_RECORD_DEPENDENCIES = ["Bulk Ticket Coupon"]
+IGNORE_TEST_RECORD_DEPENDENCIES = []
 
 
 class TestEventTicketEmail(IntegrationTestCase):
