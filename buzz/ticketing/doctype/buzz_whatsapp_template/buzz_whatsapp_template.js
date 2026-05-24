@@ -35,9 +35,9 @@ function render_jinja_buttons(frm) {
 		`
 	).join("");
 
+	// <div class="text-muted small mb-1">${__("Insert Jinja Variable")}</div>
 	const html = `
 		<div class="buzz-jinja-buttons mb-2">
-			<div class="text-muted small mb-1">${__("Insert Jinja Variable")}</div>
 			<div class="flex flex-wrap gap-2">${buttons}</div>
 		</div>
 	`;
